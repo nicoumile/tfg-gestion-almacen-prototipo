@@ -1,0 +1,54 @@
+# Secrets de Streamlit — NUNCA subir credenciales reales al repo
+.streamlit/secrets.toml
+.streamlit/secrets.toml.bak
+# Claves JSON de cuentas de servicio de Google
+*service_account*.json
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Bytecode / cache de Python
+__pycache__/
+*.pyc
+.ruff_cache/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Datos del negocio y documentos -- no van al repo (tanda 11)
+Facturas/
+Claude outputs/
+backup_antes_de_borrar_*/
+respaldos/
+EFIP2/
+*.csv
+*.xlsx
+*.dump
+# excepción: la base SIMULADA del entregable 3 (no son datos reales) queda en el repo para
+# poder reproducir los resultados del TFG
+!base_simulada_oficial_entregable3.dump
+# y la base de DEMOSTRACIÓN del entregable 4 (la simulada sobre el esquema actual, ver preparar_demo.py)
+!base_demo_entregable4.dump
+*.zip
+*.docx
+*.pdf
+*.pkl
+*.png
+
+# Archivos de trabajo para subir las tandas
+_tanda*/
+_git_*
+_msg_*
+subir_*.bat
+*.log
+
+# Bases simuladas de la demo (se publican)
+!base_demo_entregable4.dump
+!base_simulada_oficial_entregable3.dump
+!catalogo_real_export.csv
+!promo_componentes_export.csv
+!proveedores_export.csv

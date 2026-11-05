@@ -1,0 +1,8 @@
+﻿promocion_id,promocion_nombre,promo_tipo,precio_venta_con_iva,componente_articulo_id,componente_nombre,cantidad_por_unidad,unidad_medida
+491,PROMO FERNET,virtual,26000.0,253,FERNET BRANCA 750CC,1.0,unidad
+491,PROMO FERNET,virtual,26000.0,258,GASEOSA COCA COLA 1.5L,1.0,unidad
+498,PROMO FERNET CON 0,virtual,26000.0,253,FERNET BRANCA 750CC,1.0,unidad
+498,PROMO FERNET CON 0,virtual,26000.0,402,GASEOSA COCA COLA 0 (ZERO) 1.5L,1.0,unidad
+492,PROMO MILA,virtual,26000.0,125,MILANESAS DE POLLO CIPOLLEÑAS,2.0,unidad
+493,PROMO PANCHO ,virtual,7500.0,183,SALCHICHAS PALADINI X6,1.0,kg
+493,PROMO PANCHO ,virtual,7500.0,489,pan pancho ,1.0,unidad

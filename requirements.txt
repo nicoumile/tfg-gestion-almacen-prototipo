@@ -1,0 +1,12 @@
+# Versiones fijas (20/10/2026): las mismas con las que se probó la app.
+# Sin versión, Streamlit Cloud instala la última en cada reinicio y la app
+# puede cambiar o romperse sola. Para actualizar: cambiar acá, probar, subir.
+streamlit==1.66.0
+sqlalchemy==2.1.5
+psycopg2-binary==2.9.13
+pandas==3.0.5
+numpy==2.5.3
+openpyxl==3.1.5
+altair==6.3.0
+tzdata==2026.5
+gspread==6.2.1
