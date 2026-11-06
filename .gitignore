@@ -30,9 +30,9 @@ EFIP2/
 *.dump
 # excepción: la base SIMULADA del entregable 3 (no son datos reales) queda en el repo para
 # poder reproducir los resultados del TFG
-!base_simulada_oficial_entregable3.dump
+!datos/base_simulada_oficial_entregable3.dump
 # y la base de DEMOSTRACIÓN del entregable 4 (la simulada sobre el esquema actual, ver preparar_demo.py)
-!base_demo_entregable4.dump
+!datos/base_demo_entregable4.dump
 *.zip
 *.docx
 *.pdf
@@ -47,12 +47,12 @@ subir_*.bat
 *.log
 
 # Bases simuladas de la demo (se publican)
-!base_demo_entregable4.dump
-!base_simulada_oficial_entregable3.dump
-!catalogo_real_export.csv
-!promo_componentes_export.csv
-!proveedores_export.csv
+!datos/base_demo_entregable4.dump
+!datos/base_simulada_oficial_entregable3.dump
+!datos/catalogo_real_export.csv
+!datos/promo_componentes_export.csv
+!datos/proveedores_export.csv
 
 # Resultados agregados del Anexo A (datos simulados)
-!robustez_calibracion/tablas/*.csv
-!robustez_calibracion/*.png
+!analisis/robustez_calibracion/tablas/*.csv
+!analisis/robustez_calibracion/*.png

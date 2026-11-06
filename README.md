@@ -4,6 +4,17 @@ MVP funcional probado de punta a punta: base de datos PostgreSQL + app en
 Streamlit para cargar facturas de compra, registrar ventas y gastos, y ver
 alertas de stock/vencimiento/variación de precios.
 
+## Estructura del repositorio
+
+| Carpeta | Contenido |
+|---|---|
+| Raíz | Lo necesario para correr la app: `app.py`, sus módulos, `schema.sql`, `requirements.txt` y `preparar_demo.py` |
+| `datos/` | Bases de demostración y catálogo |
+| `analisis/` | Simulación, evaluación del pronóstico, validación y robustez |
+| `superados/` | Migraciones, controles por versión y utilidades históricas; la app no los necesita |
+
+Todos los comandos se corren desde la raíz del repositorio.
+
 ## Qué incluye
 
 - `schema.sql` — schema completo de PostgreSQL: tablas, vistas y triggers
@@ -20,7 +31,7 @@ Para probar el prototipo con datos: la base simulada oficial (12 meses, semilla 
 ```bash
 pip install -r requirements.txt
 createdb -U postgres almacen
-pg_restore -U postgres -d almacen --no-owner base_demo_entregable4.dump
+pg_restore -U postgres -d almacen --no-owner datos/base_demo_entregable4.dump
 ```
 
 Copiar `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` y completar `DB_HOST = "localhost"`, `DB_PORT = 5432`, `DB_NAME = "almacen"`, `DB_USER = "postgres"` y `DB_PASSWORD`. Después:
@@ -155,14 +166,14 @@ streamlit run app.py
   - **🚚 Viaje al mayorista** (el resto): venta esperada hasta el próximo viaje (Configuración → días entre viajes) + margen de seguridad según la clase ABC (A 95 %, B 90 %, C 80 %) − stock, redondeado al bulto del proveedor. Si vence antes del próximo viaje, cubre solo su vida útil. Se puede corregir la cantidad o destildar, y copiar el texto para WhatsApp agrupado por proveedor, con costo estimado con IVA (lo que hay que llevar).
   - **⚙️ Artículos de compra diaria y perecederos**: marcar compra diaria, vida útil y nivel de servicio propio; sugiere artículos que se compran seguido.
 - **Lógica en `lista_compras.py`**; el margen de seguridad usa raíz(venta esperada) corregida por la dispersión medida en la evaluación del pronóstico de cada clase.
-- **Requiere** correr una vez `python migracion_lista_compras.py` (agrega `articulos.reposicion_dias`, `vida_util_dias`, `nivel_servicio` y el parámetro `valor_recupero_pct`), con respaldo previo.
+- **Requiere** correr una vez `python superados/migraciones/migracion_lista_compras.py` (agrega `articulos.reposicion_dias`, `vida_util_dias`, `nivel_servicio` y el parámetro `valor_recupero_pct`), con respaldo previo.
 
 ## Pronóstico de demanda por artículo (Sprint 2, HU-014 — 18/10/2026)
 
 - **🔮 Pronóstico de demanda** (pantalla nueva, la ve el dueño; se puede habilitar a otros): cuánto se espera vender de cada artículo en los próximos 7 y 14 días, cuántos días alcanza el stock actual, y el gráfico de ventas reales vs pronóstico por artículo. Si hay historia suficiente (≈ 48 días), muestra también el error de cada clase ABC comparado con el método anterior.
 - **Lógica en `pronostico.py`** (pandas/numpy, 2 consultas, sin una consulta por artículo): demanda diaria desde `v_ventas_analitica` (combos resueltos en sus componentes, consumo interno incluido, sueltos fraccionados contados en su bolsa, reemplazos sumados al artículo vigente); modelos: promedio de 30 días (línea base), nivel suavizado y Croston-SBA, ajustados por día de semana y bloque del mes; la configuración se elige **por clase ABC** con un backtest de origen móvil (60 días, horizonte de 7 días, sin fuga de datos).
 - **Pronóstico guardado**: la primera vez que el dueño entra cada día se guarda el pronóstico de los próximos 14 días en `pronostico_snapshot`, para medir el error real durante la validación.
-- **`evaluar_pronostico.py`**: reproduce la evaluación para el documento (tablas CSV + figura). Ej.: `python evaluar_pronostico.py 2026-10-05` sobre la base simulada (usa los datos hasta el día anterior a la fecha indicada).
+- **`evaluar_pronostico.py`**: reproduce la evaluación para el documento (tablas CSV + figura). Ej.: `python analisis/evaluar_pronostico.py 2026-10-05` sobre la base simulada (usa los datos hasta el día anterior a la fecha indicada).
 - **Demanda censurada (21/10/2026):** un día sin venta en que el artículo arrancó sin stock no cuenta como "demanda 0": no se vendió porque no había. El stock de cada día se reconstruye hacia atrás desde el stock actual (compras, ventas, combos, fraccionamientos y correcciones manuales). No se corrigen los artículos cuyo stock reconstruido queda negativo (faltan compras cargadas) ni los que tienen menos de 7 días con stock. En la base simulada (13 % de la demanda perdida por quiebres) baja el sesgo contra la demanda verdadera de −15,6 % a −4,5 % en la clase A (`experimento_censura.py`).
 - **Error sin sesgo de selección:** además del error con el que se elige el modelo, la pantalla muestra el error elegido con la primera mitad de los días de prueba y medido con la segunda.
 - El error se mide contra lo vendido: con quiebres, lo vendido es menos que la demanda, así que un pronóstico que corrige la censura puede aparecer "por encima".
@@ -176,7 +187,7 @@ streamlit run app.py
 - **Sesión recordada (tanda 10, 21/10/2026):** al entrar, el navegador guarda una cookie firmada (`almacen_sesion`) que vence a las 5 de la mañana del día siguiente: recargar la página o abrir otra pestaña no pide volver a entrar. La firma usa una clave derivada de la contraseña de la base (o `SESION_SECRETO` en los secrets, si se define) e incluye una huella de la contraseña de la persona: cambiarla o desactivar a la persona invalida la sesión recordada. **Salir** la borra. En una computadora compartida, cada uno tiene que tocar Salir al terminar.
 - **Menú por secciones (tanda 10):** cada pantalla tiene su dirección (por ejemplo `/venta`, `/caja`, `/lista-de-compras`; la de inicio es la raíz) y al recargar se queda en la misma. Atención solo ve, y solo puede abrir por dirección, las pantallas habilitadas.
 - **Límites conocidos**: la URL de la app sigue siendo pública, la protección es la contraseña. El bloqueo por 5 intentos fallidos todavía vive en la sesión del navegador (tanda 12).
-- **Instalación en una base existente** (con respaldo previo): `python respaldo_produccion.py` y después `python migracion_sprint2.py` (pide la contraseña inicial del comerciante, usuario `dueno`). Recién después, subir la versión nueva de la app.
+- **Instalación en una base existente** (con respaldo previo): `python analisis/respaldo_produccion.py` y después `python superados/migraciones/migracion_sprint2.py` (pide la contraseña inicial del comerciante, usuario `dueno`). Recién después, subir la versión nueva de la app.
 - Corrección: la pantalla **🏷️ Precios por Proveedor** fallaba cuando había artículos con más de un proveedor (buscaba una columna por su nombre anterior al renombrarla).
 
 ## Importar Facturas desde la planilla (16/10/2026)
@@ -187,7 +198,7 @@ streamlit run app.py
 - **Sin duplicados**: cada factura importada guarda `ref_externa = 'planilla:C-000xx'` (única en la base) y se marca en la planilla (columna "Factura app"). Si ya existe una factura del mismo proveedor y número cargada a mano, avisa y permite marcarla sin volver a sumar stock.
 - **Diccionario de la planilla (23/10/2026)**: al importar, la app escribe en la hoja "Diccionario" (fila del proveedor + código) el artículo vinculado (`id_articulo_app` y `Artículo app`, el nombre en el catálogo) y el `Factor pack`. En las facturas siguientes cada renglón se reconoce primero **por el código del proveedor** (📗), aunque la descripción venga escrita distinto; después por alias exacto (✅) y por último por similitud (⭐). Si el código coincide pero la descripción es de otro producto, no se usa el código. El lector también aprovecha el Factor pack para proponer el pack la próxima vez. Si la planilla no responde, la factura se importa igual y se avisa.
 - `origen = 'llm'` en las facturas importadas, para poder distinguirlas de las manuales en análisis posteriores.
-- Requiere: correr una vez `python migracion_importador_facturas.py`, agregar `gspread` (ya está en `requirements.txt`) y configurar en *Secrets* `PLANILLA_FACTURAS_ID` + `[gcp_service_account]` (ver `.streamlit/secrets.toml.example` e `importador_planilla.py`).
+- Requiere: correr una vez `python superados/migraciones/migracion_importador_facturas.py`, agregar `gspread` (ya está en `requirements.txt`) y configurar en *Secrets* `PLANILLA_FACTURAS_ID` + `[gcp_service_account]` (ver `.streamlit/secrets.toml.example` e `importador_planilla.py`).
 
 ## Stock inmovilizado (Reportes → Clasificación ABC; corregido en la tanda 15, 22/10/2026)
 
@@ -205,7 +216,7 @@ streamlit run app.py
 - **Calidad de datos**: los inactivos sin stock quedan fuera del indicador. Si les queda stock, siguen adentro con la alerta "Inactivo con stock" hasta que se liquide o se ajuste a 0. La foto semanal guarda cuántos artículos se evaluaron y cuántos quedaron fuera por inactivos.
 - **ABC**: los inactivos se siguen clasificando (sus ventas del período ocurrieron) y se marcan como tales.
 - **Reposición**: el artículo nuevo suma la venta reciente del que reemplazó.
-- Requiere correr una vez `python migracion_articulos_inactivos.py` antes de usar la versión nueva.
+- Requiere correr una vez `python superados/migraciones/migracion_articulos_inactivos.py` antes de usar la versión nueva.
 
 ## Novedades de la versión anterior
 
@@ -320,7 +331,7 @@ Instrumentos del documento "Protocolo de validación con el comerciante" (20/10/
 - **Motivo "Vencido"** en 💵 Registrar Venta → 🗑️ Sobrante del día: baja stock como consumo interno y va a costo como gasto "Vencido" (mercadería: no resta del neto de caja). No cuenta como demanda para el pronóstico ni como movimiento para el stock inmovilizado. Merma del mes en el Dashboard (`db.merma_vencido`).
 - **Lista de compras**: si el artículo (o su categoría) vence antes del próximo viaje, cubre solo esos días (antes, solo con la vida útil del artículo).
 - **Alertas de quiebre**: la probabilidad de agotarse usa una binomial negativa con la dispersión que mide la evaluación (la misma del stock de seguridad de la lista). Con dispersión 1 (mientras no hay evaluación propia, ~48 días de historia) es exactamente la Poisson de antes. En la base simulada la Poisson subestimaba a la mitad los riesgos bajos y medios; con la dispersión el error de calibración bajó de 1,9 a 0,6-1,0 puntos.
-- Requiere `python migracion_tanda18.py`. Sin la migración la app funciona igual que antes (la pestaña de vencimientos no aparece y Configuración avisa).
+- Requiere `python superados/migraciones/migracion_tanda18.py`. Sin la migración la app funciona igual que antes (la pestaña de vencimientos no aparece y Configuración avisa).
 
 ## Hora argentina y clase heredada de los combos (tanda 20, 10/2026)
 
@@ -367,7 +378,7 @@ Instrumentos del documento "Protocolo de validación con el comerciante" (20/10/
   - conteos, % de exactitud del inventario y conteos corregidos;
   - datos asignados y arreglados;
   - cierres guardados y diferencia de caja promedio.
-- Requiere `python migracion_tanda21.py`. Sin la migración, la pantalla avisa y el resto de la app no cambia.
+- Requiere `python superados/migraciones/migracion_tanda21.py`. Sin la migración, la pantalla avisa y el resto de la app no cambia.
 
 ## Comparación de políticas de reposición (HU-021, tanda 22, 10/2026)
 
@@ -382,24 +393,24 @@ Responde si comprar con la lista de compras de la app conviene más que como se 
 - **Resultado (40 años simulados, 27/10/2026)**: la política por pronóstico pierde **3,3-3,5 %** de las ventas, contra **12,9-15,4 %** de la regla actual y **4,1-4,5 %** de la ABC fija. Sirve el **95 %** de lo pedido, contra 87-89 % y 90-91 %. Inmoviliza **16-22 % menos capital** que la regla actual y **17-20 % menos** que la ABC. Mejora en los 40 años contra las dos. La ABC fija protege la clase A (98 %), pero a costa de la C (80 %); el pronóstico queda parejo (A 97 %, B 95 %, C 92-93 %).
 - Uso:
   ```
-  python simular_politicas.py estable 1,2,...,20 "Claude outputs/tanda22/corridas"     (~30 s por semilla)
-  python simular_politicas.py cambiante 1,2,...,20 "Claude outputs/tanda22/corridas"
-  python analizar_politicas.py "Claude outputs/tanda22/corridas" "Claude outputs/tanda22"
+  python analisis/simular_politicas.py estable 1,2,...,20 "Claude outputs/tanda22/corridas"     (~30 s por semilla)
+  python analisis/simular_politicas.py cambiante 1,2,...,20 "Claude outputs/tanda22/corridas"
+  python analisis/analizar_politicas.py "Claude outputs/tanda22/corridas" "Claude outputs/tanda22"
   ```
 - Antecedente: la misma comparación se corrió el 23-24/10 fuera del repo con el pronóstico de la tanda 16 (ahí figuraba como "HU-018", con la numeración vieja). Con el código actual dio los mismos resultados, con diferencias de décimas.
 
 ## Notas de testing
 
 **Desde la tanda 11 (10/2026):** cada tanda se prueba antes de subirla con el kit de
-`pruebas/` (ver `pruebas/README.md`), sobre una copia local de producción armada
+`superados/pruebas/` (ver `superados/pruebas/README.md`), sobre una copia local de producción armada
 desde un respaldo. El kit compara el comportamiento de la versión vieja y la nueva:
 reportes, análisis, pronóstico y un escenario fijo de ventas, facturas y gastos.
 También abre todas las pantallas y prueba en un navegador real el ingreso, el menú,
 los permisos y que la venta guarde quién atendió.
 
 **Índices (tanda 11):** `schema.sql` trae índices para las consultas frecuentes. En
-una base existente se agregan con `python migracion_tanda11_indices.py`, previo
-`python respaldo_produccion.py`. Solo agrega índices y no cambia datos.
+una base existente se agregan con `python superados/migraciones/migracion_tanda11_indices.py`, previo
+`python analisis/respaldo_produccion.py`. Solo agrega índices y no cambia datos.
 
 Antes de la tanda 11:
 

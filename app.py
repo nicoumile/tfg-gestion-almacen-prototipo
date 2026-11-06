@@ -4656,7 +4656,7 @@ elif pagina == "🏭 Proveedores":
     # ---------------- Consignación (tanda 14) ----------------
     with tab_consig:
         if not db.hay_consignacion():
-            st.info("Para usar consignación falta correr la migración de la tanda 14 (migracion_tanda14.py).")
+            st.info("Para usar consignación falta correr la migración de la tanda 14 (superados/migraciones/migracion_tanda14.py).")
         else:
             st.caption(
                 "Proveedores que dejan mercadería y cobran recién lo vendido. La reposición se carga como una "
@@ -5265,7 +5265,7 @@ elif pagina == "🏫 Desafío Recreo":
                "veas. Suma estrellitas, completa el boletín de la semana y desbloquea figuritas. Con esas fechas la "
                "app aprende cuánto duran de verdad los productos.")
     if not desafio.hay_desafio():
-        st.info("Falta correr `python migracion_tanda21.py` (con la tienda cerrada, después del respaldo).")
+        st.info("Falta correr `python superados/migraciones/migracion_tanda21.py` (con la tienda cerrada, después del respaldo).")
         st.stop()
 
     hoy_d = hoy_argentina()
@@ -5800,7 +5800,7 @@ elif pagina == "⚙️ Configuración":
         "se controla. Si un producto vino con menos vida de la habitual, cargá la fecha real en la factura."
     )
     if not db.hay_tanda18():
-        st.info("Para usar esto hay que correr una vez `python migracion_tanda18.py`.")
+        st.info("Para usar esto hay que correr una vez `python superados/migraciones/migracion_tanda18.py`.")
     else:
         vida_cat = db.vida_util_por_categoria()
         cats_cfg = sorted(c for c in db.listar_articulos()["categoria"].dropna().unique() if c != "Promocion")

@@ -81,7 +81,7 @@ def main():
     with db.engine.begin() as conn:
         ultima = conn.execute(text("SELECT MAX(fecha) FROM ventas")).scalar()
         if ultima is None:
-            sys.exit("La base no tiene ventas: restaurá primero base_demo_entregable4.dump.")
+            sys.exit("La base no tiene ventas: restaurá primero datos/base_demo_entregable4.dump.")
         semanas = ((hoy - dt.timedelta(days=1)) - ultima).days // 7
         if semanas > 0:
             correr_fechas(conn, semanas * 7)
