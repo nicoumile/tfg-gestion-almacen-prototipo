@@ -1,0 +1,5 @@
+﻿pronostico,horizonte,mae_u_dia,venta_media_u_dia,wape_%,sesgo_%
+Método anterior (promedio 30 días),1 día,23.59,113.02,20.87,10.14
+Método anterior (promedio 30 días),1 a 7 días,23.71,113.27,20.93,9.9
+Modelo elegido por clase,1 día,17.99,113.02,15.92,9.74
+Modelo elegido por clase,1 a 7 días,17.87,113.27,15.78,9.3

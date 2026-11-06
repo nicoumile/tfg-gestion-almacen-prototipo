@@ -52,3 +52,7 @@ subir_*.bat
 !catalogo_real_export.csv
 !promo_componentes_export.csv
 !proveedores_export.csv
+
+# Resultados agregados del Anexo A (datos simulados)
+!robustez_calibracion/tablas/*.csv
+!robustez_calibracion/*.png
