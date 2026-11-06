@@ -1,0 +1,21 @@
+Robustez y calibración (Anexo A, apartado "Robustez y calibración"; corrida del 23/10/2026)
+
+Figuras
+  figura_robustez_politicas.png   ventas perdidas y capital, 20 trayectorias por escenario, 4 reglas (Figura A3)
+  figura_nivel_servicio.png       nivel de servicio objetivo y logrado por clase (Figura A4)
+  figura_calibracion.png          calibración de la probabilidad de agotarse (Figura A5)
+  En el documento, la Figura A5 lleva la leyenda actualizada: las alertas de la aplicación
+  usan hoy la binomial negativa. Los datos son los mismos.
+
+Tablas (CSV)
+  robustez_resumen, robustez_pareada, robustez_por_clase, nivel_servicio_por_clase,
+  calibracion_resumen, mae_wape_por_clase_y_modelo, mae_total_diario
+
+Scripts
+  Son las versiones usadas en esa corrida, con pronostico.py y lista_compras.py de ese momento.
+  Se conservan aparte porque demanda_sim.py y simular_politicas.py tienen versiones
+  posteriores en la raíz del repositorio.
+  demanda_sim.py        demanda verdadera por semilla y escenario (estable / cambiante)
+  simular_politicas.py  python simular_politicas.py estable 1,2,...,20 out_runs   (unos 2 minutos por semilla)
+  analizar.py           python analizar.py out_runs out_analisis
+  metricas_mae.py       DB_NAME=almacen_sim python metricas_mae.py 2026-10-04 salida
