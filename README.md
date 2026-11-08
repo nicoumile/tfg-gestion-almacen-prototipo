@@ -28,6 +28,8 @@ Todos los comandos se corren desde la raíz del repositorio.
 
 Para probar el prototipo con datos: la base simulada oficial (12 meses, semilla 42) sobre el esquema actual.
 
+Requisitos: Python de 3.12 a 3.14 (numpy 2.5 exige 3.12 y pandas 3.0.5 no trae instalador para 3.15; se recomienda 3.13), PostgreSQL 18 (el respaldo de `datos/` se generó con pg_dump 18 y una versión anterior de pg_restore puede rechazarlo) y Git.
+
 ```bash
 pip install -r requirements.txt
 createdb -U postgres almacen
@@ -41,7 +43,7 @@ python preparar_demo.py
 streamlit run app.py
 ```
 
-`preparar_demo.py` corre las fechas de la base en semanas enteras para que la última venta quede en la última semana (si no, el pronóstico ve un mes sin ventas) y crea el usuario de demostración: usuario `demo`, contraseña `demo-tfg-2026`, rol dueño. Con `--usuario` y `--clave` se eligen otros. Se niega a correr contra la base de producción.
+`preparar_demo.py` corre las fechas de la base para que la última venta quede ayer (si no, el pronóstico ve un mes sin ventas), carga datos de ejemplo simulados para las pantallas que la simulación deja vacías (gastos mensuales, marcados "dato de ejemplo", y un segundo precio de proveedor para parte de los artículos de almacén, para comparar en Proveedores → Precios) y crea el usuario de demostración: usuario `demo`, contraseña `demo-tfg-2026`, rol dueño. Con `--usuario` y `--clave` se eligen otros. Se niega a correr contra la base de producción.
 
 ## Instalación desde cero (base vacía)
 
