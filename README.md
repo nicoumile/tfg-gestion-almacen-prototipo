@@ -43,7 +43,7 @@ python preparar_demo.py
 streamlit run app.py
 ```
 
-`preparar_demo.py` corre las fechas de la base para que la última venta quede ayer (si no, el pronóstico ve un mes sin ventas), carga datos de ejemplo simulados para las pantallas que la simulación deja vacías (gastos mensuales, marcados "dato de ejemplo", y un segundo precio de proveedor para parte de los artículos de almacén, para comparar en Proveedores → Precios) y crea el usuario de demostración: usuario `demo`, contraseña `demo-tfg-2026`, rol dueño. Con `--usuario` y `--clave` se eligen otros. Se niega a correr contra la base de producción.
+`preparar_demo.py` corre las fechas de la base para que la última venta quede ayer (si no, el pronóstico ve un mes sin ventas), carga datos de ejemplo simulados para las pantallas que la simulación deja vacías (gastos mensuales, marcados "dato de ejemplo", y un segundo precio de proveedor para parte de los artículos de almacén, para comparar en Proveedores → Precios), suma el pan de compra diaria (PAN NEWEN 500G) y las milanesas de pollo con la configuración que tienen en el negocio real y un historial simulado de un año (compras, ventas, sobrante y vencidos), y crea el usuario de demostración: usuario `demo`, contraseña `demo-tfg-2026`, rol dueño. Con `--usuario` y `--clave` se eligen otros. Se niega a correr contra la base de producción.
 
 ## Instalación desde cero (base vacía)
 
